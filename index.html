@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>3DVR Citizen Science</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #0a0f1c;
+      color: #f5d061;
+      padding: 20px;
+    }
+    input, textarea {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      background: #111;
+      color: #fff;
+      border: 1px solid #333;
+    }
+    button {
+      background: gold;
+      color: black;
+      padding: 10px;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h1>3DVR Citizen Science Log</h1>
+
+<form id="logForm">
+  <input type="text" id="category" placeholder="Category (RF, Soil, Health)">
+  <input type="text" id="location" placeholder="Location">
+  <textarea id="notes" placeholder="Observations"></textarea>
+  <button type="submit">Log Entry</button>
+</form>
+
+<h2>Entries</h2>
+<div id="entries"></div>
+
+<script>
+const entriesDiv = document.getElementById("entries");
+
+function loadEntries() {
+  const entries = JSON.parse(localStorage.getItem("logs") || "[]");
+  entriesDiv.innerHTML = entries.map(e => `
+    <div style="border:1px solid #333; padding:10px; margin:10px 0;">
+      <strong>${e.category}</strong><br>
+      ${e.location}<br>
+      ${e.notes}<br>
+      <small>${e.timestamp}</small>
+    </div>
+  `).join("");
+}
+
+document.getElementById("logForm").onsubmit = function(e) {
+  e.preventDefault();
+
+  const entry = {
+    category: document.getElementById("category").value,
+    location: document.getElementById("location").value,
+    notes: document.getElementById("notes").value,
+    timestamp: new Date().toISOString()
+  };
+
+  const logs = JSON.parse(localStorage.getItem("logs") || "[]");
+  logs.push(entry);
+  localStorage.setItem("logs", JSON.stringify(logs));
+
+  loadEntries();
+};
+
+loadEntries();
+</script>
+
+</body>
+</html>
